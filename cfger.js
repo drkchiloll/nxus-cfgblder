@@ -1,6 +1,11 @@
 // Need File System to Open CSV and Save CFG File
 var fs = require('fs');
 
+// Remove the First 2 Objects in the Argv List
+process.argv.shift();
+process.argv.shift();
+var files = process.argv;
+
 var interface = (params) => {
   return (
     `${params.idx === 0 ? "": "\n"}`+
@@ -29,14 +34,11 @@ var returnFileContents = (filePath, callback) => {
 var writeFileContents = (filePath, payload, callback) => {
   fs.writeFile(filePath, payload, (err) => {
     if(err) callback(err, null);
-    else callback(null, {succss: true});
+    else callback(null, {success: true});
   });
 };
 
-process.argv.shift();
-process.argv.shift();
-var files = process.argv;
-
+// The Implementation
 (() => {
   files.forEach((file, i) => {
     returnFileContents(`./${file}`, (err, svis) => {
@@ -46,17 +48,18 @@ var files = process.argv;
         var configs = svi.split(',');
         cfgs += interface({
           idx: idx,
-          vlanInt: configs[0],
-          intIp: configs[1],
-          mask: configs[2],
-          vlanId: configs[0].replace('vlan ', ''),
-          virtIp: configs[3],
-          name: configs[4]
+          vlanInt: configs[0],                     // vlan 25
+          intIp: configs[1],                       // int ip addrs
+          mask: configs[2],                        // 24
+          vlanId: configs[0].replace('vlan ', ''), // 25
+          virtIp: configs[3],                      // hsrp ip address
+          name: configs[4]                         // int description
         });
         return cfgs;
       }, cfgs);
       var newFN = `nxus_cfg_sw0${i+3}.cfg`;
       writeFileContents(`./${newFN}`, cfgs, (err, result) => {
+        if(err) console.error(err);
         if(result) console.log(`New file written successfully.`);
       });
     });
