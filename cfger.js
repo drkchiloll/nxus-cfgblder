@@ -75,7 +75,7 @@ var runner = (args) => {
   if(args instanceof Array) {
     files = args;
   }
-  files.map((file, i) => {
+  return files.map((file, i) => {
     var newFN = `nxus_cfg0${i+1}.cfg`;
     var cfgs;
     var filePath;
