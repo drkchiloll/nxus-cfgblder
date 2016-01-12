@@ -13,8 +13,18 @@
 vlan 2,10.255.2.4,23,10.255.2.1,voice_esx_cluster
 ```
 
-#### Run the Script
+#### Usage
+
+Execute as "stand-alone" Script
 
 ```
 bash$ node cfger.js file1.csv file2.csv
+```
+
+Execute as a "module"
+
+```javascript
+// In a New file with Access to cfger.js
+var cfg = require('./cfger');
+cfg(['file1.csv', 'file2.csv', '...']);
 ```
