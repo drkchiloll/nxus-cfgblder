@@ -1,6 +1,6 @@
 {
   "name": "nxus-cfger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Project wherein I help Automate some Nexus CLI Configs (probably something better out there using Ansible)",
   "main": "cfger.js",
   "scripts": {
