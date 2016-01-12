@@ -26,5 +26,5 @@ Execute as a "module"
 ```javascript
 // In a New file with Access to cfger.js
 var cfg = require('./cfger');
-cfg(['file1.csv', 'file2.csv', '...']);
+cfg(['..CSV_Data..', '..CSV_Data..', '...']);
 ```
