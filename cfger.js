@@ -24,6 +24,23 @@ var interface = (params) => {
   );
 };
 
+var createCfg = (svis) => {
+  var cfgs = '';
+  return svis.reduce((str, svi, idx) => {
+    var configs = svi.split(',');
+    cfgs += interface({
+      idx: idx,
+      vlanInt: configs[0],                     // vlan 25
+      intIp: configs[1],                       // int ip addrs
+      mask: configs[2],                        // 24
+      vlanId: configs[0].replace('vlan ', ''), // 25
+      virtIp: configs[3],                      // hsrp ip address
+      name: configs[4]                         // int description
+    });
+    return cfgs;
+  }, cfgs);
+};
+
 var returnFileContents = (filePath, callback) => {
   fs.readFile(filePath, 'utf8', (err, content) => {
     if(err) return callback(err, null);
@@ -54,42 +71,32 @@ var writeFileContents = (filePath, payload, callback) => {
 
 // The Implementation
 var runner = (args) => {
-  if(!args) return;
   if(args instanceof Array) {
     files = args;
   }
-  files.forEach((file, i) => {
-    returnFileContents(`./${file}`, (err, svis) => {
-      if(err) return new Error(err);
-      if(handleFileValidity(svis.shift())) {
-        var cfgs = '';
-        svis.reduce((str, svi, idx) => {
-          var configs = svi.split(',');
-          cfgs += interface({
-            idx: idx,
-            vlanInt: configs[0],                     // vlan 25
-            intIp: configs[1],                       // int ip addrs
-            mask: configs[2],                        // 24
-            vlanId: configs[0].replace('vlan ', ''), // 25
-            virtIp: configs[3],                      // hsrp ip address
-            name: configs[4]                         // int description
-          });
-          return cfgs;
-        }, cfgs);
-        var newFN = `nxus_cfg0${i+1}.cfg`;
-        var filePath;
-        // Store in Root DIR or File Directory
-        if(args) {
-          filePath = path.join(__dirname, `../files/${newFN}`);
-        } else {
-          filePath = `./${newFN}`;
-        }
-        writeFileContents(filePath, cfgs, (err, result) => {
-          if(err) console.error(err);
-          if(result) console.log(`New file written successfully.`);
-        });
+  files.map((file, i) => {
+    var newFN = `nxus_cfg0${i+1}.cfg`;
+    var cfgs;
+    var filePath;
+
+    if(args) {
+      // Node Module
+      if(handleFileValidity(file.shift())) {
+        return createCfg(file);
       }
-    });
+    } else {
+      returnFileContents(`./${file}`, (err, svis) => {
+        if(err) return new Error(err);
+        if(handleFileValidity(svis.shift())) {
+          cfgs = createCfg(svis);
+          filePath = `./${newFN}`;
+          writeFileContents(filePath, cfgs, (err, result) => {
+            if(err) console.error(err);
+            if(result) console.log(`New file written successfully.`);
+          });
+        }
+      });
+    }
   });
 };
 
