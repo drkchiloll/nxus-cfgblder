@@ -8,16 +8,17 @@ process.argv.shift();
 var files = process.argv;
 
 var interface = (params) => {
+  var vlInt = params.vlanInt.replace(' ', '');
+  vlInt = vlInt.substring(0,1).toUpperCase() + vlInt.substring(1);
   return (
     `${params.idx === 0 ? "": "\n"}`+
-    `int ${params.vlanInt}\n`+
+    `int ${vlInt}\n`+
     `  no ip redirects\n`+
     `  ip address ${params.intIp}/${params.mask}\n`+
     `  no ipv6 redirects\n`+
     `  ip pim sparse-mode\n`+
     `  hsrp version 2\n`+
     `  hsrp ${params.vlanId}\n`+
-    `    authentication md5 key-string i6R#6Rj4!U4tJxJ!5\n`+
     `    ip ${params.virtIp}\n`+
     `  description ${params.name}\n`+
     `  no shutdown\n!`
