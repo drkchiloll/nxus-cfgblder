@@ -82,8 +82,9 @@ var runner = (args) => {
 
     if(args) {
       // Node Module
-      if(handleFileValidity(file.shift())) {
-        return createCfg(file);
+      var svis = file.split('\r\n');
+      if(handleFileValidity(svis.shift())) {
+        return createCfg(svis);
       }
     } else {
       returnFileContents(`./${file}`, (err, svis) => {
